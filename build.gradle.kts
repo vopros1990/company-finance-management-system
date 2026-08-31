@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
 	java
 	id("org.springframework.boot") version "4.1.1"
@@ -18,10 +20,16 @@ repositories {
 }
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-liquibase")
+	runtimeOnly("org.postgresql:postgresql")
+
 //	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+
+	implementation("org.mapstruct:mapstruct:1.6.3")
+
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")

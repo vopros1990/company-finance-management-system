@@ -1,3 +1,27 @@
+logging:
+  level:
+    root: INFO
+
+server:
+  port: 8086
+
 spring:
   application:
     name: company-finance-management-system
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${DB_NAME:-company_finance_management_system}?sslmode=disable&currentSchema=finance_management,public
+    username: ${DB_USER:-admin}
+    password: ${DB_PASSWORD:-admin}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yml
+    default-schema: finance_management
+    liquibase-schema: public
