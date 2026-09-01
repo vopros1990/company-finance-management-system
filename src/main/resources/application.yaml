@@ -3,16 +3,16 @@ logging:
     root: INFO
 
 server:
-  port: 8086
+  port: 8080
 
 spring:
   application:
     name: company-finance-management-system
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/${DB_NAME:-company_finance_management_system}?sslmode=disable&currentSchema=finance_management,public
-    username: ${DB_USER:-admin}
-    password: ${DB_PASSWORD:-admin}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable&currentSchema=finance_management,public
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
