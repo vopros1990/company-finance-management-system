@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 014
+      author: dk
+      comment: "Add constraints to audit_log table"
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: audit_log
+            baseTableSchemaName: finance_management
+            baseColumnNames: department_id
+            referencedTableName: departments
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_audit_log_department_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: audit_log
+            baseTableSchemaName: finance_management
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_audit_log_user_id
+            onDelete: RESTRICT
+        - addForeignKeyConstraint:
+            baseTableName: audit_log
+            baseTableSchemaName: finance_management
+            baseColumnNames: transaction_id
+            referencedTableName: transactions
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_audit_log_transaction_id

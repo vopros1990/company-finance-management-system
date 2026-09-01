@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006
+      author: dk
+      comment: "Add foreign key (department_id) to accounts table"
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: accounts
+            baseTableSchemaName: finance_management
+            baseColumnNames: department_id
+            referencedTableName: departments
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_accounts_department_id
+            onDelete: CASCADE

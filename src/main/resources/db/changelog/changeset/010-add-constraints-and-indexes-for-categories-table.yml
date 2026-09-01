@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010
+      author: dk
+      comment: "Add foreign key constraint (parent_category_id), index (path) to categories table"
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: categories
+            baseTableSchemaName: finance_management
+            baseColumnNames: parent_category_id
+            referencedTableName: categories
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_categories_parent_category_id
+            onDelete: CASCADE
+        - createIndex:
+            tableName: categories
+            schemaName: finance_management
+            indexName: idx_categories_path
+            columns:
+                - column:
+                      name: path

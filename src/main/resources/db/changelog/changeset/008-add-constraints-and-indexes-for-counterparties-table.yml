@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008
+      author: dk
+      comment: "Add unique key index (inn), index (name) to counterparties table"
+      changes:
+        - addUniqueConstraint:
+            tableName: counterparties
+            schemaName: finance_management
+            indexName: uk_counterparties_inn
+            columnNames: inn
+        - createIndex:
+            tableName: counterparties
+            schemaName: finance_management
+            indexName: idx_counterparties_name
+            columns:
+                - column:
+                      name: name
