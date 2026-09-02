@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,6 +17,26 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler({
+            InvalidSessionException.class
+    })
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleAuthenticationException(AuthenticationException e) {
+
+        return ErrorResponse.of(e.getMessage(), HttpStatus.UNAUTHORIZED.value());
+
+    }
+
+    @ExceptionHandler({
+            AccessDeniedException.class
+    })
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessDeniedException(Exception e) {
+
+        return ErrorResponse.of("Доступ запрещен", HttpStatus.FORBIDDEN.value());
+
+    }
 
     @ExceptionHandler({
             BadRequestException.class,
@@ -41,16 +62,6 @@ public class GlobalExceptionHandler {
         return messages.size() == 1 ?
                 ErrorResponse.of(messages.getFirst(), HttpStatus.BAD_REQUEST.value()) :
                 ErrorResponse.of(messages, HttpStatus.BAD_REQUEST.value());
-
-    }
-
-    @ExceptionHandler({
-            AccessDeniedException.class
-    })
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleAccessDeniedException(Exception e) {
-
-        return ErrorResponse.of("Доступ запрещен", HttpStatus.FORBIDDEN.value());
 
     }
 

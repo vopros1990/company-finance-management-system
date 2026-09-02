@@ -1,5 +1,6 @@
 package com.example.company_finance_management_system.identity.service;
 
+import com.example.company_finance_management_system.common.exception.InvalidSessionException;
 import com.example.company_finance_management_system.configuration.AppSecurityConfigurationProperties;
 import com.example.company_finance_management_system.identity.entity.Session;
 import com.example.company_finance_management_system.identity.mapping.SessionMapper;
@@ -9,6 +10,7 @@ import com.example.company_finance_management_system.utils.HashUtils;
 import com.example.company_finance_management_system.utils.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +79,7 @@ public class SessionService {
                 .orElseThrow(() -> new IllegalStateException("Сессия с ID " + sessionId + " не найдена"));
 
         if (!session.getUser().getId().equals(userId))
-            throw new IllegalStateException("Неверная сессия");
+            throw new InvalidSessionException("Неверная сессия");
 
         requireValidSession(session);
 
@@ -94,7 +96,7 @@ public class SessionService {
     private void requireSessionNotRevoked(Session session) {
 
         if (session.getRevoked())
-            throw new IllegalStateException("Сессия отозвана");
+            throw new InvalidSessionException("Сессия отозвана");
 
     }
 
@@ -103,7 +105,7 @@ public class SessionService {
         OffsetDateTime now = OffsetDateTime.now(clock);
 
         if (session.getExpiresAt().isBefore(now))
-            throw new IllegalStateException("Сессия просрочена");
+            throw new InvalidSessionException("Сессия просрочена");
 
     }
 

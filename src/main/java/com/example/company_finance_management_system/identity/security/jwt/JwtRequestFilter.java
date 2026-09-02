@@ -1,5 +1,6 @@
 package com.example.company_finance_management_system.identity.security.jwt;
 
+import com.example.company_finance_management_system.common.exception.InvalidSessionException;
 import com.example.company_finance_management_system.common.exception.JwtTokenValidationException;
 import com.example.company_finance_management_system.identity.security.CustomUserDetailsService;
 import com.example.company_finance_management_system.identity.service.SessionService;
@@ -80,6 +81,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } catch (JwtTokenValidationException e) {
 
             log.warn("Invalid token", e);
+
+        } catch (InvalidSessionException e) {
+
+            log.warn("Invalid/revoked session", e);
 
         } catch (IllegalStateException e) {
 
