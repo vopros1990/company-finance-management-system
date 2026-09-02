@@ -1,6 +1,6 @@
 package com.example.company_finance_management_system.identity.security.jwt;
 
-import com.example.company_finance_management_system.configuration.JwtConfigurationProperties;
+import com.example.company_finance_management_system.common.exception.JwtTokenValidationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -25,20 +25,17 @@ public class JwtUtils {
 
     private final Duration accessTokenExpiry;
 
-    private final Duration refreshTokenExpiry;
-
     private final Clock clock;
 
     public JwtUtils(
-            JwtConfigurationProperties config,
+            String base64Secret,
+            Duration accessTokenExpiry,
             Clock clock
     ) {
 
-        this.secretKey = generateSecretKey(config.base64Secret());
+        this.secretKey = generateSecretKey(base64Secret);
 
-        this.accessTokenExpiry = config.accessTokenExpiry();
-
-        this.refreshTokenExpiry = config.refreshTokenExpiry();
+        this.accessTokenExpiry = accessTokenExpiry;
 
         this.clock = clock;
 
@@ -60,22 +57,6 @@ public class JwtUtils {
 
     }
 
-    public String refreshToken(String subject, Long sessionId) {
-
-        Instant now = Instant.now(clock);
-
-        Instant expiry = now.plus(refreshTokenExpiry);
-
-        return Jwts.builder()
-                .subject(subject)
-                .claim("sid", sessionId)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiry))
-                .signWith(secretKey)
-                .compact();
-
-    }
-
     public Claims parseClaims(String token) {
 
         return Jwts.parser()
@@ -86,15 +67,9 @@ public class JwtUtils {
 
     }
 
-    public String extractSubject(Claims claims) {
-
-        return claims.getSubject();
-
-    }
-
     public Long extractSubjectLongValue(Claims claims) {
 
-        return claims.get("sub", Long.class);
+        return Long.valueOf(claims.getSubject());
 
     }
 
@@ -104,7 +79,7 @@ public class JwtUtils {
 
     }
 
-    public boolean isValidToken(String token) {
+    public void requireValidToken(String token) {
 
         try {
 
@@ -113,15 +88,11 @@ public class JwtUtils {
                     .build()
                     .parseSignedClaims(token);
 
-            return true;
-
         } catch (JwtException | IllegalArgumentException e) {
 
-            log.warn("Invalid JWT", e);
+            throw new JwtTokenValidationException("Невалидный токен", e);
 
         }
-
-        return false;
 
     }
 

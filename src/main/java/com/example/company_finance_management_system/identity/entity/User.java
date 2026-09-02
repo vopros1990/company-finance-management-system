@@ -1,8 +1,7 @@
 package com.example.company_finance_management_system.identity.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,7 +9,10 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "users", schema = "finance_management")
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class User {
 
@@ -20,10 +22,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
+    private String name;
 
     @Column(nullable = false)
     private String email;
@@ -32,8 +31,19 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
+    private String passwordHash;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id", nullable = false)
+    @JoinTable(
+            name = "department_user",
+            schema = "finance_management",
+            joinColumns = {
+                    @JoinColumn(name = "department_id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "user_id")
+            }
+    )
     private Department department;
 
     @CreationTimestamp

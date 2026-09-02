@@ -22,10 +22,13 @@ public class CustomUserDetails implements UserDetails {
     public CustomUserDetails(User user) {
 
         this.id = user.getId();
+
         this.email = user.getEmail();
+
         this.authorities = Collections.singleton(
                 new SimpleGrantedAuthority(
                         user.getRole().name()));
+
         this.password = user.getPasswordHash();
 
     }

@@ -4,15 +4,17 @@ import com.example.company_finance_management_system.finance.entity.Transaction;
 import com.example.company_finance_management_system.identity.entity.Department;
 import com.example.company_finance_management_system.identity.entity.User;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "audit_log", schema = "finance_management")
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class AuditLogEntry {
 

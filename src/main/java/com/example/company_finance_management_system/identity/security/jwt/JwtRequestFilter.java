@@ -1,8 +1,8 @@
 package com.example.company_finance_management_system.identity.security.jwt;
 
-import com.example.company_finance_management_system.identity.entity.Session;
+import com.example.company_finance_management_system.common.exception.JwtTokenValidationException;
 import com.example.company_finance_management_system.identity.security.CustomUserDetailsService;
-import com.example.company_finance_management_system.identity.service.SessionAccessService;
+import com.example.company_finance_management_system.identity.service.SessionService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.time.Clock;
-import java.time.OffsetDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -28,11 +26,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
 
-    private final SessionAccessService sessionAccessService;
+    private final SessionService sessionService;
 
     private final CustomUserDetailsService userDetailsService;
-
-    private final Clock clock;
 
     @Override
     protected void doFilterInternal(
@@ -43,12 +39,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String authorizationHeader = extractAuthorizationHeader(request);
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer "))
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+
             filterChain.doFilter(request, response);
+
+            return;
+            
+        }
 
         String token = authorizationHeader.substring(7);
 
-        processAuthenticate(token);
+        authenticate(token);
 
         filterChain.doFilter(request, response);
 
@@ -60,21 +61,31 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     }
 
-    private void processAuthenticate(String token) {
+    private void authenticate(String token) {
 
-        if (jwtUtils.isValidToken(token))
-            return;
+        try {
 
-        Claims claims = jwtUtils.parseClaims(token);
+            jwtUtils.requireValidToken(token);
 
-        Long userId = jwtUtils.extractSubjectLongValue(claims);
+            Claims claims = jwtUtils.parseClaims(token);
 
-        Long sessionId = jwtUtils.extractSessionId(claims);
+            Long userId = jwtUtils.extractSubjectLongValue(claims);
 
-        if (!isValidSession(userId, sessionId))
-            return;
+            Long sessionId = jwtUtils.extractSessionId(claims);
 
-        tryAuthenticate(userId);
+            sessionService.requireValidSession(userId, sessionId);
+
+            tryAuthenticate(userId);
+
+        } catch (JwtTokenValidationException e) {
+
+            log.warn("Invalid token", e);
+
+        } catch (IllegalStateException e) {
+
+            log.warn("Invalid session state", e);
+
+        }
 
     }
 
@@ -99,28 +110,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             log.warn("Failed to authenticate user with ID {}", userId, e);
 
         }
-
-    }
-
-    private boolean isValidSession(Long userId, Long sessionId) {
-
-        try {
-
-            Session session = sessionAccessService.getById(sessionId);
-
-            OffsetDateTime now = OffsetDateTime.now(clock);
-
-            return !session.getRevoked()
-                    && !session.getExpiresAt().isBefore(now)
-                    && session.getUser().getId().equals(userId);
-
-        } catch (Exception e) {
-
-            log.warn("Invalid session {}", sessionId, e);
-
-        }
-
-        return false;
 
     }
 

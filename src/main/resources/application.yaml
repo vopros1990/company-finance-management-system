@@ -3,7 +3,7 @@ logging:
     root: INFO
 
 server:
-  port: 8080
+  port: 8086
 
 spring:
   application:
@@ -25,3 +25,23 @@ spring:
     change-log: db/changelog/db.changelog-master.yml
     default-schema: finance_management
     liquibase-schema: public
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${SECURITY_OAUTH2_GOOGLE_CLIENT_ID}
+            client-secret: ${SECURITY_OAUTH2_GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/api/v1/auth/oauth2/callback/{registrationId}"
+
+app:
+  security:
+    base64-secret: ${SECURITY_JWT_BASE64_SECRET}
+    access-token-expiry: 5m
+    refresh-token-expiry: 30d
+

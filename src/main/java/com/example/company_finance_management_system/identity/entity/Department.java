@@ -1,8 +1,7 @@
 package com.example.company_finance_management_system.identity.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,7 +9,10 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "departments", schema = "finance_management")
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class Department {
 

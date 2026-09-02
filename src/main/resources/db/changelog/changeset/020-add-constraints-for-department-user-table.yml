@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 020
+      author: dk
+      comment: "Add constraints to department_user table"
+      changes:
+        - addUniqueConstraint:
+            tableName: department_user
+            schemaName: finance_management
+            indexName: uk_department_user_user_id
+            columnNames: user_id
+        - addForeignKeyConstraint:
+            baseTableName: department_user
+            baseTableSchemaName: finance_management
+            baseColumnNames: department_id
+            referencedTableName: departments
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_department_user_department_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: department_user
+            baseTableSchemaName: finance_management
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_department_user_user_id
+            onDelete: CASCADE

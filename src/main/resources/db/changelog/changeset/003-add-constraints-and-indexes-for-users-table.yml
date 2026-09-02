@@ -9,12 +9,3 @@ databaseChangeLog:
             schemaName: finance_management
             indexName: uk_users_email
             columnNames: email
-        - addForeignKeyConstraint:
-            baseTableName: users
-            baseTableSchemaName: finance_management
-            baseColumnNames: department_id
-            referencedTableName: departments
-            referencedTableSchemaName: finance_management
-            referencedColumnNames: id
-            constraintName: fk_users_department_id
-            onDelete: CASCADE
