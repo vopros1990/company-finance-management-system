@@ -19,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long>, PagingAndSort
 
     boolean existsByEmail(String email);
 
+    boolean existsByName(String email);
+
     Page<User> findByDepartmentId(Long departmentId, Pageable pageable);
 
 }
