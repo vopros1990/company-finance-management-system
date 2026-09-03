@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +90,18 @@ public class UserService {
 
     }
 
+    public void deleteById(
+            @Valid @Min(value = 1, message = "Некорректный ID пользователя")
+            Long id
+    ) {
+
+        if (!repository.existsById(id))
+            throw new EntityNotFoundException("Пользователь с ID " + id + " не найден");
+
+        repository.deleteById(id);
+
+    }
+
     private User getUser(Long id) {
 
         return repository.findById(id)
@@ -97,5 +110,4 @@ public class UserService {
                 );
 
     }
-
 }

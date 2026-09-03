@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +40,21 @@ public class UserController {
 
     }
 
+    @PutMapping("/users/{userId}")
+    @JsonView(UserView.Extended.class)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public UserResponse updateUserById(
+            @PathVariable Long userId,
+            @RequestBody UserUpdateRequest request
+    ) {
+
+        return service.updateUser(userId, request);
+
+    }
+
     @GetMapping("/users/{userId}")
     @JsonView(UserView.Extended.class)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public UserResponse findUser(@PathVariable Long userId) {
 
         return service.findById(userId);
@@ -50,10 +63,21 @@ public class UserController {
 
     @GetMapping("/users")
     @JsonView(UserView.class)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public PagedModel<UserResponse> findAll(Pageable pageable) {
 
         return service.findAll(pageable);
+
+    }
+
+    @DeleteMapping("/users/{userId}")
+    @JsonView(UserView.Extended.class)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+
+        service.deleteById(userId);
+
+        return ResponseEntity.noContent().build();
 
     }
 
