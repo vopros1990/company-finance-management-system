@@ -1,6 +1,7 @@
 package com.example.company_finance_management_system.identity.api.v1.controller;
 
 import com.example.company_finance_management_system.identity.api.v1.dto.jsonview.UserView;
+import com.example.company_finance_management_system.identity.api.v1.dto.request.UserUpdateRequest;
 import com.example.company_finance_management_system.identity.api.v1.dto.response.UserResponse;
 import com.example.company_finance_management_system.identity.security.CustomUserDetails;
 import com.example.company_finance_management_system.identity.service.UserService;
@@ -10,10 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +24,18 @@ public class UserController {
     @JsonView(UserView.Extended.class)
     public UserResponse meUser(@AuthenticationPrincipal CustomUserDetails user) {
 
-        return service.meUser(user);
+        return service.findById(user.getId());
+
+    }
+
+    @PutMapping("/users/me")
+    @JsonView(UserView.Extended.class)
+    public UserResponse updateMeUser(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestBody UserUpdateRequest request
+    ) {
+
+        return service.updateUser(user.getId(), request);
 
     }
 
