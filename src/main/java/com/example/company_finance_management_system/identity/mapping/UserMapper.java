@@ -1,7 +1,7 @@
 package com.example.company_finance_management_system.identity.mapping;
 
 import com.example.company_finance_management_system.identity.api.v1.dto.request.UserRegisterRequest;
-import com.example.company_finance_management_system.identity.api.v1.dto.response.UserRegisterResponse;
+import com.example.company_finance_management_system.identity.api.v1.dto.response.UserResponse;
 import com.example.company_finance_management_system.identity.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -16,7 +16,7 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface UserMapper {
 
-    UserRegisterResponse toRegisterResponse(User user);
+    UserResponse toResponse(User user);
 
     User toEntity(UserRegisterRequest request, String passwordHash);
 

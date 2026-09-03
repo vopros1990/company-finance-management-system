@@ -88,7 +88,6 @@ public class SecurityConfiguration {
                                         "/api/v1/refresh",
                                         "/api/v1/logout").permitAll()
                                 .anyRequest().authenticated()
-
                 )
                 .oauth2Login(oauth2 ->
                         oauth2

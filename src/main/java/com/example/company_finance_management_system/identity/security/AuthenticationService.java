@@ -4,7 +4,7 @@ import com.example.company_finance_management_system.identity.api.v1.dto.request
 import com.example.company_finance_management_system.identity.api.v1.dto.request.RefreshTokenRequest;
 import com.example.company_finance_management_system.identity.api.v1.dto.request.UserRegisterRequest;
 import com.example.company_finance_management_system.identity.api.v1.dto.response.AuthResponse;
-import com.example.company_finance_management_system.identity.api.v1.dto.response.UserRegisterResponse;
+import com.example.company_finance_management_system.identity.api.v1.dto.response.UserResponse;
 import com.example.company_finance_management_system.identity.entity.User;
 import com.example.company_finance_management_system.identity.mapping.UserMapper;
 import com.example.company_finance_management_system.identity.repository.UserRepository;
@@ -36,14 +36,17 @@ public class AuthenticationService {
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
 
-    public UserRegisterResponse register(@Valid UserRegisterRequest request) {
+    public UserResponse register(@Valid UserRegisterRequest request) {
+
+        if (userRepository.existsByEmail(request.email()))
+            throw new IllegalStateException("Пользователь с данным email уже зарегистрирован");
 
         User user = userMapper.toEntity(
                 request,
                 passwordEncoder.encode(request.password())
         );
 
-        return userMapper.toRegisterResponse(
+        return userMapper.toResponse(
                 userRepository.save(user)
         );
 

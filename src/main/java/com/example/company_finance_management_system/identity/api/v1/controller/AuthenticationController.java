@@ -1,11 +1,13 @@
 package com.example.company_finance_management_system.identity.api.v1.controller;
 
+import com.example.company_finance_management_system.identity.api.v1.dto.jsonview.UserView;
 import com.example.company_finance_management_system.identity.api.v1.dto.request.AuthRequest;
 import com.example.company_finance_management_system.identity.api.v1.dto.request.RefreshTokenRequest;
 import com.example.company_finance_management_system.identity.api.v1.dto.request.UserRegisterRequest;
 import com.example.company_finance_management_system.identity.api.v1.dto.response.AuthResponse;
-import com.example.company_finance_management_system.identity.api.v1.dto.response.UserRegisterResponse;
+import com.example.company_finance_management_system.identity.api.v1.dto.response.UserResponse;
 import com.example.company_finance_management_system.identity.security.AuthenticationService;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,8 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<UserRegisterResponse> register(@RequestBody UserRegisterRequest request) {
+    @JsonView(UserView.class)
+    public ResponseEntity<UserResponse> register(@RequestBody UserRegisterRequest request) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

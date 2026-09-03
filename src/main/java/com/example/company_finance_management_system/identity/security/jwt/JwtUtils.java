@@ -90,7 +90,7 @@ public class JwtUtils {
 
         } catch (JwtException | IllegalArgumentException e) {
 
-            throw new JwtTokenValidationException("Невалидный токен", e);
+            throw new JwtTokenValidationException("Невалидный/просроченный токен", e);
 
         }
 

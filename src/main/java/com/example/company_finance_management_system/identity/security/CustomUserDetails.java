@@ -27,7 +27,8 @@ public class CustomUserDetails implements UserDetails {
 
         this.authorities = Collections.singleton(
                 new SimpleGrantedAuthority(
-                        user.getRole().name()));
+                        "ROLE_" + user.getRole().name())
+        );
 
         this.password = user.getPasswordHash();
 

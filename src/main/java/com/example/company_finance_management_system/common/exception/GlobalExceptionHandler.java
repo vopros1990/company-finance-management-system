@@ -1,6 +1,7 @@
 package com.example.company_finance_management_system.common.exception;
 
 import com.example.company_finance_management_system.common.dto.response.ErrorResponse;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.coyote.BadRequestException;
@@ -72,6 +73,16 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleConflictException(Exception e) {
 
         return ErrorResponse.of(e.getMessage(), HttpStatus.CONFLICT.value());
+
+    }
+
+    @ExceptionHandler({
+            EntityNotFoundException.class
+    })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleEntityNotFountException(Exception e) {
+
+        return ErrorResponse.of(e.getMessage(), HttpStatus.NOT_FOUND.value());
 
     }
 
