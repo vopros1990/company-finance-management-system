@@ -91,7 +91,7 @@ public class TransactionController {
 
     }
 
-    @PatchMapping("/reverse/{transactionId}")
+    @PatchMapping("/reversal/{transactionId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_ACCOUNTANT')")
     public ResponseEntity<Void> reverseById(
             @PathVariable Long transactionId,

@@ -1,9 +1,11 @@
 package com.example.company_finance_management_system.finance.api.v1.dto.request;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 
+@Builder
 public record TransactionCreateRequest(
 
         @NotBlank(message = "Укажите тип транзакции")
@@ -17,6 +19,10 @@ public record TransactionCreateRequest(
         @NotNull(message = "Укажите сумму")
         @DecimalMin(value = "0", message = "Укажите корректное значение суммы")
         BigDecimal amount,
+
+        @NotNull(message = "Укажите ID подразделения")
+        @Min(value = 1, message = "Укажите корректный ID подразделения")
+        Long departmentId,
 
         @NotNull(message = "Укажите ID категории")
         @Min(value = 1, message = "Укажите корректный ID транзакции")

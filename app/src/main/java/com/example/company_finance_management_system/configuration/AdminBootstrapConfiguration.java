@@ -5,16 +5,20 @@ import com.example.company_finance_management_system.identity.entity.UserRole;
 import com.example.company_finance_management_system.identity.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableConfigurationProperties(BootstrapAdminProperties.class)
 public class AdminBootstrapConfiguration {
 
     private final UserRepository repository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final BootstrapAdminProperties properties;
 
     @PostConstruct
     public void createAdminSuperuserIfNotExists() {
@@ -22,15 +26,9 @@ public class AdminBootstrapConfiguration {
         if (repository.existsByName("admin"))
             return;
 
-        String password = System.getenv("BOOTSTRAP_ADMIN_PASSWORD");
+        String password = properties.password();
 
-        String email = System.getenv("BOOTSTRAP_ADMIN_EMAIL");
-
-        if (password == null || email == null)
-            throw new IllegalStateException("""
-                    Для первого запуска приложения требуется создать admin пользователя.
-                    Передайте переменные окружениия BOOTSTRAP_ADMIN_PASSWORD и BOOTSTRAP_ADMIN_EMAIL
-                    """);
+        String email = properties.email();
 
         User admin = User.builder()
                 .name("admin")

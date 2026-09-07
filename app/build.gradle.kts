@@ -33,6 +33,8 @@ dependencies {
 
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.2")
 
+	implementation("org.springframework.boot:spring-boot-starter-aspectj")
+
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	implementation("io.jsonwebtoken:jjwt:0.13.0")
@@ -48,9 +50,10 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
-	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 
-	testImplementation("com.c4-soft.springaddons:spring-addons-starter-oidc-test:9.1.5")
+	testImplementation("org.springframework.boot:spring-boot-testcontainers")
+	testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+	testImplementation("org.testcontainers:testcontainers-postgresql")
 
 	testCompileOnly("org.projectlombok:lombok")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")

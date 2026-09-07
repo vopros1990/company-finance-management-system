@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,11 +27,13 @@ public class AuditEntryService {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logTransaction(OperationSummary summary) {
 
         AuditEntry entry = AuditEntry.builder()
                 .transactionId(summary.transactionId())
                 .userId(summary.userId())
+                .failed(summary.failed())
                 .operationType(summary.operationType())
                 .build();
 

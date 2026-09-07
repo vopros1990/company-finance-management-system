@@ -4,6 +4,7 @@ import com.example.company_finance_management_system.finance.entity.Currency;
 import com.example.company_finance_management_system.finance.entity.TransactionStatus;
 import com.example.company_finance_management_system.finance.entity.TransactionType;
 import com.example.company_finance_management_system.identity.api.v1.dto.response.CounterpartyResponse;
+import com.example.company_finance_management_system.identity.api.v1.dto.response.DepartmentResponse;
 import com.example.company_finance_management_system.identity.api.v1.dto.response.UserResponse;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ public record TransactionResponse(
         TransactionStatus status,
         Currency currency,
         BigDecimal amount,
+        DepartmentResponse department,
         CategoryResponse category,
         UserResponse author,
         AccountResponse accountTarget,

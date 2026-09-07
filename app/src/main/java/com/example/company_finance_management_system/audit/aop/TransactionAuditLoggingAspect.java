@@ -23,36 +23,48 @@ public class TransactionAuditLoggingAspect {
 
     private final AuditEntryService service;
 
-    @Pointcut(value = "execution(* *.TransactionService.create(..))")
+    @Pointcut("""
+        execution(* com.example.company_finance_management_system.finance.service.TransactionService.create(..))
+        """)
     public void create() {}
 
-    @Pointcut(value = "execution(* *.TransactionService.update(..))")
+    @Pointcut("""
+        execution(* com.example.company_finance_management_system.finance.service.TransactionService.update(..))
+        """)
     public void update() {}
 
-    @Pointcut(value = "execution(* *.TransactionService.confirmById(..))")
+    @Pointcut("""
+        execution(* com.example.company_finance_management_system.finance.service.TransactionService.confirmById(..))
+        """)
     public void confirm() {}
 
-    @Pointcut(value = "execution(* *.TransactionService.reversalById(..))")
+    @Pointcut("""
+        execution(* com.example.company_finance_management_system.finance.service.TransactionService.reversalById(..))
+        """)
     public void reverse() {}
 
-    @Pointcut(value = "execution(* *.TransactionService.deleteById(..))")
+    @Pointcut("""
+        execution(* com.example.company_finance_management_system.finance.service.TransactionService.deleteById(..))
+        """)
     public void delete() {}
 
     @Around("create()")
-    public void logCreate(ProceedingJoinPoint pjp) throws Throwable {
+    public Object logCreate(ProceedingJoinPoint pjp) throws Throwable {
 
-        log.debug("TransactionService.create() intercepted");
+        OperationSummary.OperationSummaryBuilder builder = OperationSummary.builder()
+                .userId(getCurrentUserId())
+                .operationType(OperationType.CREATE);
 
-        OperationSummary.OperationSummaryBuilder builder = OperationSummary.builder();
+        Object result;
 
         try {
 
-            TransactionResponse response = (TransactionResponse) pjp.proceed();
+            result = pjp.proceed();
 
-            builder
-                    .transactionId(response.id())
-                    .userId(getCurrentUserId())
-                    .operationType(OperationType.CREATE);
+            TransactionResponse response = (TransactionResponse) result;
+
+            builder.transactionId(response.id());
+
 
         } catch (Throwable e) {
 
@@ -66,12 +78,12 @@ public class TransactionAuditLoggingAspect {
 
         }
 
+        return result;
+
     }
 
     @Around(value = "update()")
     public void logUpdate(ProceedingJoinPoint pjp) throws Throwable {
-
-        log.debug("TransactionService.update() intercepted");
 
         Long transactionId = (Long) pjp.getArgs()[0];
 
@@ -86,8 +98,6 @@ public class TransactionAuditLoggingAspect {
     @Around(value = "confirm()")
     public void logConfirm(ProceedingJoinPoint pjp) throws Throwable {
 
-        log.debug("TransactionService.confirmById() intercepted");
-
         Long transactionId = (Long) pjp.getArgs()[0];
 
         processLog(
@@ -99,9 +109,7 @@ public class TransactionAuditLoggingAspect {
     }
 
     @Around(value = "reverse()")
-    public void logCancel(ProceedingJoinPoint pjp) throws Throwable {
-
-        log.debug("TransactionService.cancelById() intercepted");
+    public void logReverse(ProceedingJoinPoint pjp) throws Throwable {
 
         Long transactionId = (Long) pjp.getArgs()[0];
 
@@ -116,8 +124,6 @@ public class TransactionAuditLoggingAspect {
     @Around(value = "delete()")
     public void logDelete(ProceedingJoinPoint pjp) throws Throwable {
 
-        log.debug("TransactionService.deleteById() intercepted");
-
         Long transactionId = (Long) pjp.getArgs()[0];
 
         processLog(
@@ -128,18 +134,18 @@ public class TransactionAuditLoggingAspect {
 
     }
 
-    private void processLog(OperationType operationType, Long transactionId, ProceedingJoinPoint pjp) throws Throwable {
+    private Object processLog(OperationType operationType, Long transactionId, ProceedingJoinPoint pjp) throws Throwable {
 
-        OperationSummary.OperationSummaryBuilder builder = OperationSummary.builder();
+        OperationSummary.OperationSummaryBuilder builder = OperationSummary.builder()
+                .userId(getCurrentUserId())
+                .operationType(operationType)
+                .transactionId(transactionId);
+
+        Object result;
 
         try {
 
-            builder
-                    .transactionId(transactionId)
-                    .userId(getCurrentUserId())
-                    .operationType(operationType);
-
-            pjp.proceed();
+            result = pjp.proceed();
 
         } catch (Throwable e) {
 
@@ -152,6 +158,8 @@ public class TransactionAuditLoggingAspect {
             service.logTransaction(builder.build());
 
         }
+
+        return result;
 
     }
 

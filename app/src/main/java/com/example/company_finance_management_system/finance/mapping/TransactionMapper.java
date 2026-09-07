@@ -5,11 +5,13 @@ import com.example.company_finance_management_system.finance.api.v1.dto.request.
 import com.example.company_finance_management_system.finance.api.v1.dto.response.TransactionResponse;
 import com.example.company_finance_management_system.finance.entity.Transaction;
 import com.example.company_finance_management_system.identity.mapping.CounterpartyMapper;
+import com.example.company_finance_management_system.identity.mapping.DepartmentMapper;
 import com.example.company_finance_management_system.identity.mapping.UserMapper;
 import org.mapstruct.*;
 
 @Mapper(
         uses = {
+                DepartmentMapper.class,
                 CategoryMapper.class,
                 AccountMapper.class,
                 UserMapper.class,

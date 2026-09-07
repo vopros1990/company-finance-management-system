@@ -16,12 +16,14 @@ import com.example.company_finance_management_system.identity.entity.Department;
 import com.example.company_finance_management_system.identity.entity.User;
 import com.example.company_finance_management_system.identity.entity.UserRole;
 import com.example.company_finance_management_system.identity.repository.CounterpartyRepository;
+import com.example.company_finance_management_system.identity.repository.DepartmentRepository;
 import com.example.company_finance_management_system.identity.repository.UserRepository;
 import com.example.company_finance_management_system.identity.security.CustomUserDetails;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.security.access.AccessDeniedException;
@@ -37,9 +39,11 @@ import java.time.OffsetDateTime;
 @Service
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class TransactionService {
 
     private final TransactionRepository repository;
+    private final DepartmentRepository departmentRepository;
     private final CategoryRepository categoryRepository;
     private final AccountRepository accountRepository;
     private final CounterpartyRepository counterpartyRepository;
@@ -83,7 +87,7 @@ public class TransactionService {
 
         Transaction transaction = getById(id);
 
-        Long departmentId = getAccountDepartmentId(transaction.getAccountTarget().getId());
+        Long departmentId = transaction.getDepartment().getId();
 
         requireHasDepartmentAuditAccess(departmentId, userDetails);
 
@@ -101,11 +105,12 @@ public class TransactionService {
 
         transaction.setStatus(TransactionStatus.DRAFT);
 
+        handleDepartment(transaction, request.departmentId(), userDetails);
+
         handleAccounts(
                 transaction,
                 request.accountTargetId(),
-                request.accountFromId(),
-                userDetails
+                request.accountFromId()
         );
 
         handleCategory(
@@ -122,6 +127,8 @@ public class TransactionService {
                 transaction,
                 userDetails.getId()
         );
+
+        transaction = repository.save(transaction);
 
         repository.flush();
 
@@ -150,8 +157,7 @@ public class TransactionService {
         handleAccounts(
                 transaction,
                 request.accountTargetId(),
-                request.accountFromId(),
-                userDetails
+                request.accountFromId()
         );
 
         handleCategory(
@@ -163,6 +169,8 @@ public class TransactionService {
                 transaction,
                 request.counterpartyId()
         );
+
+        transaction = repository.save(transaction);
 
         repository.flush();
 
@@ -212,13 +220,15 @@ public class TransactionService {
 
         processTransaction(canceled, true);
 
-        transaction.setStatus(TransactionStatus.REVERSED);
+        canceled.setStatus(TransactionStatus.REVERSED);
 
         canceled.setReferenceTransaction(
                 repository.getReferenceById(transaction.getId())
         );
 
         transaction.setProcessedAt(OffsetDateTime.now(clock));
+
+        repository.save(canceled);
 
         repository.flush();
 
@@ -272,19 +282,30 @@ public class TransactionService {
 
     }
 
-    private void handleAccounts(
+    private void handleDepartment(
             Transaction transaction,
-            Long accountTargetId,
-            Long accountFromId,
+            Long departmentId,
             CustomUserDetails userDetails
     ) {
 
-        Long accountTargetDepartmentId = getAccountDepartmentId(accountTargetId);
-
         requireHasDepartmentTransactionsAccess(
-                accountTargetDepartmentId,
+                departmentId,
                 userDetails
         );
+
+        transaction.setDepartment(
+                departmentRepository.getReferenceById(departmentId)
+        );
+
+    }
+
+    private void handleAccounts(
+            Transaction transaction,
+            Long accountTargetId,
+            Long accountFromId
+    ) {
+
+        Long targetDepartmentId = getAccountDepartmentId(accountTargetId);
 
         transaction.setAccountTarget(
                 accountRepository.getReferenceById(accountTargetId)
@@ -292,9 +313,10 @@ public class TransactionService {
 
         if (TransactionType.TRANSFER.equals(transaction.getType())) {
 
-            Long accountFromDepartmentId = getAccountDepartmentId(accountFromId);
+            Long fromDepartmentId = getAccountDepartmentId(accountFromId);
 
-            if (!accountTargetDepartmentId.equals(accountFromDepartmentId))
+            if (!targetDepartmentId.equals(fromDepartmentId) ||
+                    !targetDepartmentId.equals(transaction.getDepartment().getId()))
                 throw new IllegalArgumentException("Переводы возможны только в рамках одного подразделения");
 
             transaction.setAccountFrom(
@@ -348,7 +370,7 @@ public class TransactionService {
         Long userDepartmentId = userRepository.findById(userDetails.getId())
                 .map(User::getDepartment)
                 .map(Department::getId)
-                .orElseThrow(() -> new EntityNotFoundException("Пользовватель с ID " + userDetails.getId() + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с ID " + userDetails.getId() + " не найден"));
 
         if (!userDepartmentId.equals(departmentId))
             throw new AccessDeniedException("Отсутствуют права доступа к операции");
@@ -367,7 +389,7 @@ public class TransactionService {
     private void requireDraftTransaction(Transaction transaction) {
 
         if (!TransactionStatus.DRAFT.equals(transaction.getStatus()))
-            throw new IllegalStateException("Невозможно подтвердить операцию");
+            throw new IllegalStateException("Изменение статуса операции или удаление невозможно");
 
     }
 
@@ -384,7 +406,7 @@ public class TransactionService {
 
         boolean isTransactionAuthor = transaction.getAuthor().getId().equals(userDetails.getId());
 
-        if (!isTransactionAuthor || !isAdmin)
+        if (!isTransactionAuthor && !isAdmin)
             throw new AccessDeniedException("У вас нет доступа к данной операции");
 
     }

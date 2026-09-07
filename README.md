@@ -12,12 +12,28 @@ __Company finance management system__ - API для управления фина
 - Gradle 8.14.3
 - PostgreSQL 18.6
 ## Как запустить локально
-Для начала, настройте файл окружения .dev
+Для удобства, настройте файл окружения .dev
 ```dotenv
+# Профиль
+SPRING_PROFILES_ACTIVE=prod
+
 # Подключение БД
-DB_USER=admin
-DB_PASSWORD=admin
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=<пользователь>
+DB_PASSWORD=<пароль>
 DB_NAME=company_finance_management_system
+
+# Безопасность
+SECURITY_JWT_BASE64_SECRET=<base64-encoded секрет>
+SECURITY_ACCESS_TOKEN_EXPIRY=5m
+SECURITY_REFRESH_TOKEN_EXPIRY=30d
+SECURITY_OAUTH2_GOOGLE_CLIENT_ID=<Google client ID>
+SECURITY_OAUTH2_GOOGLE_CLIENT_SECRET=<Google client secret>
+
+# Админ
+BOOTSTRAP_ADMIN_PASSWORD=<adminPassword>
+BOOTSTRAP_ADMIN_EMAIL=<admin@example.com>
 ```
 Запустите docker-compose следующей командой
 ```shell

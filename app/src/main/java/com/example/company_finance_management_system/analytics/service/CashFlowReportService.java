@@ -5,8 +5,6 @@ import com.example.company_finance_management_system.analytics.persistance.proje
 import com.example.company_finance_management_system.common.service.CurrencyConverter;
 import com.example.company_finance_management_system.finance.entity.Currency;
 import com.example.company_finance_management_system.finance.entity.TransactionStatus;
-import com.example.company_finance_management_system.finance.repository.BudgetRepository;
-import com.example.company_finance_management_system.finance.repository.TransactionRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -26,6 +23,7 @@ import java.util.*;
 public class CashFlowReportService {
 
     private final FinanceReportServiceHelper helper;
+
     private final CurrencyConverter converter;
 
     public CashFlowReport cashFlowReport(
@@ -39,10 +37,18 @@ public class CashFlowReportService {
             String currencyAlias
     ) {
 
-        List<TransactionSummary> transactions = helper.findTransactions(departmentId, periodFrom, periodTo);
+        List<TransactionSummary> transactions = helper.findTransactions(
+                departmentId,
+                periodFrom,
+                periodTo
+        );
 
         if (transactions.isEmpty())
-            return CashFlowReport.empty(departmentId, periodFrom, periodTo);
+            return CashFlowReport.empty(
+                    departmentId,
+                    periodFrom,
+                    periodTo
+            );
 
         Map<Long, List<TransactionSummary>> groupedByCategory = helper.groupByCategory(transactions);
 

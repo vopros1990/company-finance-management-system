@@ -1,0 +1,28 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-google-client-id
+            client-secret: test-google-client-secret
+
+app:
+  security:
+    base64-secret: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=
+
+  bootstrap-admin:
+    email: admin@test.ru
+    password: test-admin-password
+
+app-configuration-logger:
+  enabled: false

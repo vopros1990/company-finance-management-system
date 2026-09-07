@@ -28,7 +28,7 @@ public class FinanceReportServiceHelper {
 
         OffsetDateTimePeriod dateTimePeriod = PeriodUtils.convert(periodFrom, periodTo, clock.getZone());
 
-        return transactionRepository.findByDepartmentIdAndPeriod(
+        return transactionRepository.findByDepartmentIdAndPeriodNotTransfer(
                 departmentId,
                 dateTimePeriod.from(),
                 dateTimePeriod.to()

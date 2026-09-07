@@ -16,6 +16,11 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
               - column:
+                  name: department_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
                   name: category_id
                   type: BIGINT
                   constraints:

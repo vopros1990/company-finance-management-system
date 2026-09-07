@@ -1,9 +1,11 @@
 package com.example.company_finance_management_system.finance.api.v1.dto.request;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 
+@Builder
 public record TransactionUpdateRequest(
 
         @Pattern(regexp = "INCOME|EXPENSE|TRANSFER")

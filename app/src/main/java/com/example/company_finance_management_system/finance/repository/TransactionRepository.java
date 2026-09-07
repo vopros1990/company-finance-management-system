@@ -22,9 +22,10 @@ public interface TransactionRepository extends
 
     @EntityGraph(
             attributePaths = {
+                    "department",
                     "category",
                     "accountTarget",
-                    "accountTo",
+                    "accountFrom",
                     "author",
                     "counterparty"
             })
@@ -36,8 +37,8 @@ public interface TransactionRepository extends
     @Query("""
             SELECT
                 t.id AS id,
-                t.accountTarget.department.id AS departmentId,
-                t.accountTarget.department.name AS departmentName,
+                t.department.id AS departmentId,
+                t.department.name AS departmentName,
                 t.category.id AS categoryId,
                 t.category.name AS categoryName,
                 t.type AS type,
@@ -45,11 +46,12 @@ public interface TransactionRepository extends
                 t.amount AS amount,
                 t.currency AS currency
             FROM Transaction t
-            WHERE t.accountTarget.department.id=:departmentId
+            WHERE t.department.id=:departmentId
             AND t.processedAt >= :from
             AND t.processedAt <= :to
             AND (t.status = 'CONFIRMED' OR t.status = 'REVERSED')
+            AND t.type <> 'TRANSFER'
             """)
-    List<TransactionSummary> findByDepartmentIdAndPeriod(Long departmentId, OffsetDateTime from, OffsetDateTime to);
+    List<TransactionSummary> findByDepartmentIdAndPeriodNotTransfer(Long departmentId, OffsetDateTime from, OffsetDateTime to);
 
 }
