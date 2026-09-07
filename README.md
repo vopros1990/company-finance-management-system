@@ -17,12 +17,18 @@ __Company finance management system__ - API для управления фина
 # Профиль
 SPRING_PROFILES_ACTIVE=prod
 
+# Логирование
+LOGGING_LEVEL_ROOT=INFO
+
+# Сервер
+SERVER_PORT=8086
+
 # Подключение БД
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=<пользователь>
 DB_PASSWORD=<пароль>
-DB_NAME=company_finance_management_system
+DB_NAME=<имя базы данных>
 
 # Безопасность
 SECURITY_JWT_BASE64_SECRET=<base64-encoded секрет>
