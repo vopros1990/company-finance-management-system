@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: company-finance-management-system
+
+  jackson:
+    mapper:
+      DEFAULT_VIEW_INCLUSION: true
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yml
+    default-schema: finance_management
+    liquibase-schema: public

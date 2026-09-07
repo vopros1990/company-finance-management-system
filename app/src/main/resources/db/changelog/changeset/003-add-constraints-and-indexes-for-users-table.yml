@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003
+      author: dk
+      comment: "Add unique key index (email), foreign key constraint (department_id) to users table"
+      changes:
+        - addUniqueConstraint:
+            tableName: users
+            schemaName: finance_management
+            indexName: uk_users_email
+            columnNames: email

@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 014
+      author: dk
+      comment: "Add constraints to budgets table"
+      changes:
+        - addUniqueConstraint:
+            tableName: budgets
+            schemaName: finance_management
+            indexName: uk_budgets_department_id_category_id_period_from_period_to
+            columnNames: department_id, category_id, period_from, period_to
+        - addForeignKeyConstraint:
+            baseTableName: budgets
+            baseTableSchemaName: finance_management
+            baseColumnNames: department_id
+            referencedTableName: departments
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_budgets_department_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: budgets
+            baseTableSchemaName: finance_management
+            baseColumnNames: responsible_user_id
+            referencedTableName: users
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_budgets_responsible_user_id
+            onDelete: RESTRICT
+        - addForeignKeyConstraint:
+            baseTableName: budgets
+            baseTableSchemaName: finance_management
+            baseColumnNames: category_id
+            referencedTableName: categories
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_budgets_category_id
+            onDelete: RESTRICT

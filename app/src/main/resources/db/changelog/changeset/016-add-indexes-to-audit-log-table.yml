@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 016
+      author: dk
+      comment: "Add indexes to audit_log table"
+      changes:
+
+        - createIndex:
+            tableName: audit_log
+            schemaName: finance_management
+            constraintName: idx_audit_log_transaction_id
+            columns:
+              - column:
+                    name: transaction_id
+
+        - createIndex:
+            tableName: audit_log
+            schemaName: finance_management
+            constraintName: idx_audit_log_user_id
+            columns:
+                - column:
+                    name: user_id
+
+        - createIndex:
+            tableName: audit_log
+            schemaName: finance_management
+            constraintName: idx_audit_log_operation_type_timestamp
+            columns:
+                - column:
+                    name: operation_type
+                - column:
+                    name: timestamp

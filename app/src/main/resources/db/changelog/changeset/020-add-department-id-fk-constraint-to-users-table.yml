@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 020
+      author: dk
+      comment: "Add foreign key department_id to users table"
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseTableSchemaName: finance_management
+            baseColumnNames: department_id
+            referencedTableName: departments
+            referencedTableSchemaName: finance_management
+            referencedColumnNames: id
+            constraintName: fk_users_department_id
+            onDelete: SET NULL

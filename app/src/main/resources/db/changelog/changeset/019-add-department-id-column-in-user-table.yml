@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 019
+      author: dk
+      comment: "Add column department_id to users table"
+      changes:
+        - addColumn:
+            tableName: users
+            schemaName: finance_management
+            columns:
+              - column:
+                  name: department_id
+                  type: BIGINT

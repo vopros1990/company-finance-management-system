@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 013
+      author: dk
+      comment: "Create budgets table"
+      changes:
+        - createTable:
+            tableName: budgets
+            schemaName: finance_management
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: department_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: responsible_user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: NUMERIC(19,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: period_from
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: period_to
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ

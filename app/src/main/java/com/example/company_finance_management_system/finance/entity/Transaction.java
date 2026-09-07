@@ -1,0 +1,78 @@
+package com.example.company_finance_management_system.finance.entity;
+
+import com.example.company_finance_management_system.identity.entity.*;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+
+@Entity
+@Table(name = "transactions", schema = "finance_management")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
+public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TransactionType type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private TransactionStatus status = TransactionStatus.DRAFT;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Currency currency;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal amount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_target_id", nullable = false)
+    private Account accountTarget;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_from_id")
+    private Account accountFrom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counterparty_id")
+    private Counterparty counterparty;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reference_transaction_id")
+    private Transaction referenceTransaction;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @UpdateTimestamp
+    private OffsetDateTime updatedAt;
+
+    private OffsetDateTime processedAt;
+
+}
